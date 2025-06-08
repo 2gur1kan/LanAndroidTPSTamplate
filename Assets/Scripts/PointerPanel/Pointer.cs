@@ -10,6 +10,7 @@ public class Pointer : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text;
     private RectTransform rectTransform;
     private Image itsMe;
+    private Collider col;
 
     private float scale;
 
@@ -23,23 +24,22 @@ public class Pointer : MonoBehaviour
         scale = Screen.height / 15;
 
         itsMe = GetComponent<Image>();
-
-        //setText(target.GetComponent<DragonController>().DragonName);
     }
 
     private void Start()
     {
-        //rectTransform.localScale = new(scale, scale, 1);
+        col = target.GetComponent<Collider>();
     }
 
     private void Update()
     {
-        if (target == null || rectTransform == null) return;
+        if (target == null || rectTransform == null || col == null) return;
 
-        float borderSize = Screen.height / 20;
+        float borderSize = Screen.height / 20f;
 
-        // Hedefin dünya pozisyonunu ekran pozisyonuna çevir
-        Vector3 screenPoint = Camera.main.WorldToScreenPoint(target.position);
+        // Collider'ın en üst noktası + offset
+        Vector3 topPoint = col.bounds.center + Vector3.up * (col.bounds.extents.y + 0.2f); // 0.2f = offset
+        Vector3 screenPoint = Camera.main.WorldToScreenPoint(topPoint);
 
         // Eğer hedef kamera arkasındaysa (Z < 0), yönü ters çevir
         if (screenPoint.z < 0)
@@ -47,7 +47,7 @@ public class Pointer : MonoBehaviour
             screenPoint *= -1;
         }
 
-        // Ekran dışı mı?
+        // Ekran dışı kontrolü
         bool isOffScreen = screenPoint.x <= borderSize || screenPoint.x >= Screen.width - borderSize ||
                            screenPoint.y <= borderSize || screenPoint.y >= Screen.height - borderSize;
 
@@ -55,15 +55,13 @@ public class Pointer : MonoBehaviour
         {
             itsMe.enabled = true;
 
-            // Clamp ile pozisyonu ekran sınırları içine al
+            // Sınırlar içine al
             screenPoint.x = Mathf.Clamp(screenPoint.x, borderSize, Screen.width - borderSize);
             screenPoint.y = Mathf.Clamp(screenPoint.y, borderSize, Screen.height - borderSize);
 
-            // Panel referansı
             RectTransform panelRect = transform.parent.GetComponent<RectTransform>();
 
-            Vector2 localPoint;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(panelRect, screenPoint, Camera.main, out localPoint))
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(panelRect, screenPoint, null, out Vector2 localPoint))
             {
                 rectTransform.localPosition = new Vector3(localPoint.x, localPoint.y, 0f);
             }
@@ -72,12 +70,10 @@ public class Pointer : MonoBehaviour
         {
             itsMe.enabled = true;
 
-            // Hedef ekran içindeyse direkt olarak oraya yerleştir
-            Vector2 localPos;
             Canvas canvas = GetComponentInParent<Canvas>();
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
 
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, canvas.worldCamera, out localPos);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, null, out Vector2 localPos);
             rectTransform.localPosition = new Vector3(localPos.x, localPos.y, 0);
         }
     }

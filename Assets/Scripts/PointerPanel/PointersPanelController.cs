@@ -15,7 +15,7 @@ public class PointersPanelController : MonoBehaviour
     }
 
     /// <summary>
-    /// Boss için pointer oluþturacak ve oluþturduðu pointer ý bossa gönderecek
+    /// diðer oyuncular için pointer oluþturacak iþlev
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
@@ -23,22 +23,6 @@ public class PointersPanelController : MonoBehaviour
     {
         Pointer BP = Instantiate(EnemyPointer).GetComponent<Pointer>();
         BP.transform.SetParent(transform, false);
-        BP.Target = target;
-
-        BP.gameObject.SetActive(true);
-
-        return BP;
-    }
-
-    /// <summary>
-    /// Anvil için pointer oluþturacak ve oluþturduðu pointer ý bossa gönderecek
-    /// </summary>
-    /// <param name="target"></param>
-    /// <returns></returns>
-    public Pointer CreateAnvilPointer(Transform target)
-    {
-        Pointer BP = Instantiate(EnemyPointer).GetComponent<Pointer>();
-        BP.transform.parent = transform;
         BP.Target = target;
 
         BP.gameObject.SetActive(true);

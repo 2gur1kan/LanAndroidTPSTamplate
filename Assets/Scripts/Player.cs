@@ -7,7 +7,8 @@ public class Player : NetworkBehaviour
 {
     [Header("Movement Settings (Hareket Ayarlarý)")]
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float jumpForce = 20f;
+    private float speedMull = 1f;
+    [SerializeField] private float jumpForce = 60f;
 
     [Header("References (Referanslar)")]
     [SerializeField] private Transform aimTarget;
@@ -49,8 +50,7 @@ public class Player : NetworkBehaviour
     {
         if (!isLocalPlayer)
         {
-            enabled = false;
-            GetComponentInChildren<Camera>().enabled = false;
+            Invoke("SetPointerInvoke", 2f); // diðer oyuncularda pointer oluþturur
             return;
         }
 
@@ -74,6 +74,11 @@ public class Player : NetworkBehaviour
         ApplyMovement();
     }
 
+    private void OnDestroy()
+    {
+        if (pointer != null) pointer.Destroy();
+    }
+
     #region Movement
 
     private void HandleInput()
@@ -84,7 +89,7 @@ public class Player : NetworkBehaviour
     private void ApplyMovement()
     {
         Vector3 move = Quaternion.Euler(0f, transform.eulerAngles.y, 0f) * moveInput.normalized;
-        Vector3 velocity = new Vector3(move.x * moveSpeed, rb.velocity.y, move.z * moveSpeed);
+        Vector3 velocity = new Vector3(move.x * moveSpeed * speedMull, rb.velocity.y, move.z * moveSpeed * speedMull);
         rb.velocity = velocity;
     }
 
@@ -141,7 +146,7 @@ public class Player : NetworkBehaviour
 
     #endregion
 
-    #region Other
+    #region Name System
 
     [HideInInspector] [SyncVar(hook = nameof(OnNameChanged))] public string Name;
 
@@ -184,6 +189,21 @@ public class Player : NetworkBehaviour
     private void TargetSendName(NetworkConnection target, string name)
     {
         CmdSetName(name);
+    }
+
+    #endregion
+
+    #region In Local Fonc
+
+    private Pointer pointer;
+
+    private void SetPointerInvoke()
+    {
+        if (PointersPanelController.Instance == null) return;
+
+        pointer = PointersPanelController.Instance.CreateEnemyPointer(transform);
+
+        pointer.setText(Name);
     }
 
     #endregion
