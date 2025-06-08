@@ -54,8 +54,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   moveSpeed: 5
-  jumpForce: 20
+  jumpForce: 60
   aimTarget: {fileID: 2783889057417931655}
+  Name: 
 --- !u!136 &4693239647824530773
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -87,7 +88,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 266872914461160277}
   serializedVersion: 4
-  m_Mass: 3
+  m_Mass: 9.8
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

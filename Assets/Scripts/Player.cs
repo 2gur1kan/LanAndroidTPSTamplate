@@ -39,8 +39,10 @@ public class Player : NetworkBehaviour
         RotationZone rotZone = FindObjectOfType<RotationZone>();
         if (rotZone != null) rotZone.SetTarget(this.transform,this.aimTarget);
 
-                CustomBTN btn = GameObject.FindGameObjectWithTag("JumpBTN").GetComponent<CustomBTN>();
+        CustomBTN btn = GameObject.FindGameObjectWithTag("JumpBTN").GetComponent<CustomBTN>();
         if (btn != null) btn.onDown += Jump;
+
+        SetName(DataBaseManager.Instance.Name);
     }
 
     private void Start()
@@ -72,7 +74,7 @@ public class Player : NetworkBehaviour
         ApplyMovement();
     }
 
-    #region Movement (Hareket Sistemi)
+    #region Movement
 
     private void HandleInput()
     {
@@ -136,6 +138,53 @@ public class Player : NetworkBehaviour
     }
 
     private void setJumpTimerCounter() => jumpTimerCounter = 1f;
+
+    #endregion
+
+    #region Other
+
+    [HideInInspector] [SyncVar(hook = nameof(OnNameChanged))] public string Name;
+
+    /// <summary>
+    /// playerýn ismini bütün serverda ayarlar 
+    /// </summary>
+    /// <param name="newName"></param>
+    public void SetName(string newName)
+    {
+        if (isLocalPlayer)
+        {
+            CmdSetName(newName);
+        }
+    }
+
+    [Command]
+    private void CmdSetName(string newName)
+    {
+        Name = newName;
+    }
+
+    private void OnNameChanged(string oldName, string newName)
+    {
+        Debug.Log($"Ýsim deðiþti: {oldName} -> {newName}");
+    }
+
+    [Command]
+    private void CmdRequestNames()
+    {
+        foreach (var conn in NetworkServer.connections)
+        {
+            if (conn.Value.identity.TryGetComponent<Player>(out var player))
+            {
+                player.TargetSendName(player.connectionToClient, player.Name);
+            }
+        }
+    }
+
+    [TargetRpc]
+    private void TargetSendName(NetworkConnection target, string name)
+    {
+        CmdSetName(name);
+    }
 
     #endregion
 }

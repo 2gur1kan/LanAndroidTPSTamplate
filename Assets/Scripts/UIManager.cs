@@ -58,6 +58,8 @@ public class UIManager : MonoBehaviour
     {
         if (NetworkClient.isConnected) return;
 
+        SetName();
+
         NetworkManager.singleton.networkAddress = hostIp;
 
         NetworkManager.singleton.StartHost();
@@ -97,6 +99,8 @@ public class UIManager : MonoBehaviour
         hostIp = ip;
         Debug.Log("Otomatik bulunan host IP: " + hostIp);
 
+        SetName();
+
         // Otomatik bağlan
         if (!NetworkClient.isConnected)
         {
@@ -104,6 +108,15 @@ public class UIManager : MonoBehaviour
             NetworkManager.singleton.StartClient();
             Debug.Log("Client otomatik bağlanmayı deniyor...");
         }
+    }
+
+    private void SetName()
+    {
+        if (NameInput == null) return;
+
+        if (string.IsNullOrWhiteSpace(NameInput.text)) return;
+
+        DataBaseManager.Instance.Name = NameInput.text;
     }
 
     public void Quit()
