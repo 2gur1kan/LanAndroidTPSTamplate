@@ -10,12 +10,16 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TMP_InputField NameInput;
 
+    [SerializeField] private GameObject OptionsPanel;
+
     private string hostIp = "192.168.1.100";
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(this);
+
+        SetOptionPanel(false);
     }
 
     public void OnJoinOrHostClicked()
@@ -105,5 +109,12 @@ public class UIManager : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
+    }
+
+    public void SetOptionPanel(bool flag)
+    {
+        if (OptionsPanel == null) return;
+
+        OptionsPanel.SetActive(flag);
     }
 }
