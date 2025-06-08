@@ -3,6 +3,7 @@ LanAndroidTPSTemplate is a third-person shooter (TPS) template designed for Andr
 
 Main Menu scene :
 ![MainMenu](https://github.com/user-attachments/assets/26a62dad-93a6-4d22-b8e4-46a4a0948042)
+When the host is created, it starts a call on port 8888 and when you start listening to this call, you will automatically connect to the host.
 
 sample scene :
 ![SampleScene](https://github.com/user-attachments/assets/4a587f5a-8479-4c0d-b6d2-f21af621d559)
