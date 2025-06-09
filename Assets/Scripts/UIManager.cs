@@ -22,6 +22,8 @@ public class UIManager : MonoBehaviour
         SetOptionPanel(false);
     }
 
+    #region Connect
+
     public void OnJoinOrHostClicked()
     {
         if (!NetworkClient.isConnected)
@@ -109,6 +111,8 @@ public class UIManager : MonoBehaviour
             Debug.Log("Client otomatik bağlanmayı deniyor...");
         }
     }
+
+    #endregion 
 
     private void SetName()
     {

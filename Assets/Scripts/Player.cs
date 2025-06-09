@@ -88,10 +88,26 @@ public class Player : NetworkBehaviour
 
     private void ApplyMovement()
     {
-        Vector3 move = Quaternion.Euler(0f, transform.eulerAngles.y, 0f) * moveInput.normalized;
+        if (aimTarget == null) return; // aimTarget yoksa iþlem yapma
+
+        // aimTarget'ýn ileri yönü (forward direction) - sadece yatay eksende
+        Vector3 aimForward = aimTarget.forward;
+        aimForward.y = 0f;
+        aimForward.Normalize(); // birim vektör yap (normalize)
+
+        // aimTarget'ýn sað yönü (right direction) - sadece yatay eksende
+        Vector3 aimRight = aimTarget.right;
+        aimRight.y = 0f;
+        aimRight.Normalize();
+
+        // Giriþe (input) göre hareket yönünü hesapla (movement direction)
+        Vector3 move = (aimForward * moveInput.z + aimRight * moveInput.x).normalized;
+
+        // Rigidbody hýzýný ayarla (velocity)
         Vector3 velocity = new Vector3(move.x * moveSpeed * speedMull, rb.velocity.y, move.z * moveSpeed * speedMull);
         rb.velocity = velocity;
     }
+
 
     private void Jump()
     {
