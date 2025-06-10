@@ -16,6 +16,7 @@ public class Player : NetworkBehaviour
     private Joystick joystick;
     private Rigidbody rb;
     private Collider col;
+    [SerializeField] private Animator animator;
 
     private bool isGrounded;
     private bool canJump;
@@ -84,28 +85,35 @@ public class Player : NetworkBehaviour
     private void HandleInput()
     {
         moveInput = new Vector3(joystick.Horizontal, 0f, joystick.Vertical);
+
+        if (moveInput != Vector3.zero) animator.SetBool("Run", true);
+        else animator.SetBool("Run", false);
     }
 
     private void ApplyMovement()
     {
-        if (aimTarget == null) return; // aimTarget yoksa iþlem yapma
+        if (aimTarget == null) return;
 
-        // aimTarget'ýn ileri yönü (forward direction) - sadece yatay eksende
         Vector3 aimForward = aimTarget.forward;
         aimForward.y = 0f;
-        aimForward.Normalize(); // birim vektör yap (normalize)
+        aimForward.Normalize();
 
-        // aimTarget'ýn sað yönü (right direction) - sadece yatay eksende
         Vector3 aimRight = aimTarget.right;
         aimRight.y = 0f;
         aimRight.Normalize();
 
-        // Giriþe (input) göre hareket yönünü hesapla (movement direction)
         Vector3 move = (aimForward * moveInput.z + aimRight * moveInput.x).normalized;
 
-        // Rigidbody hýzýný ayarla (velocity)
         Vector3 velocity = new Vector3(move.x * moveSpeed * speedMull, rb.velocity.y, move.z * moveSpeed * speedMull);
         rb.velocity = velocity;
+
+        
+        if (animator == null) return;
+
+        Vector3 localMove = transform.InverseTransformDirection(move);
+
+        animator.SetFloat("Horizontal", localMove.x);
+        animator.SetFloat("Vertical", localMove.z);
     }
 
 
@@ -113,9 +121,14 @@ public class Player : NetworkBehaviour
     {
         if (!canJump) return;
 
-        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z); // y sýfýrlanýr (reset)
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        canJump = false; // Zýpladýktan sonra tekrar zýplamayý engelle
+        canJump = false;
+
+        if (animator == null) return;
+
+        animator.SetTrigger("Jump");
+        Invoke("ResetJumpTriggerInvoke", .5f);
     }
 
     private void CheckGrounded()
@@ -137,6 +150,8 @@ public class Player : NetworkBehaviour
                 isGrounded = true;
             }
         }
+
+        if (animator != null) animator.SetBool("IsGrounded", isGrounded);
 
         if (canJump) return;
 
@@ -221,6 +236,8 @@ public class Player : NetworkBehaviour
 
         pointer.setText(Name);
     }
+
+    private void ResetJumpTriggerInvoke() => animator.ResetTrigger("Jump");
 
     #endregion
 }
