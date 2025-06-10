@@ -49,6 +49,8 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
+        Invoke("AddMeScoreboardInvoke", 2f); // 2 olamsýnýn nedeni ne olur ne olamz belki isimler geç gelir diye
+
         if (!isLocalPlayer)
         {
             Invoke("SetPointerInvoke", 2f); // diðer oyuncularda pointer oluþturur
@@ -78,6 +80,8 @@ public class Player : NetworkBehaviour
     private void OnDestroy()
     {
         if (pointer != null) pointer.Destroy();
+
+        if (ScoreboardManager.Instance != null) ScoreboardManager.Instance.RemovePlayer(transform);
     }
 
     #region Movement
@@ -238,6 +242,8 @@ public class Player : NetworkBehaviour
     }
 
     private void ResetJumpTriggerInvoke() => animator.ResetTrigger("Jump");
+
+    private void AddMeScoreboardInvoke() => ScoreboardManager.Instance.RegisterPlayer(Name, transform);
 
     #endregion
 }

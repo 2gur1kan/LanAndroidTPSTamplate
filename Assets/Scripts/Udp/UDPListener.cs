@@ -15,7 +15,15 @@ public class UDPListener : MonoBehaviour
 
     private void Start()
     {
-        client = new UdpClient(listenPort);
+        try
+        {
+            client = new UdpClient(listenPort);
+        }
+        catch (SocketException e)
+        {
+            Debug.LogWarning("Port already in use. UDP listener not started. (" + e.Message + ")");
+            client = null; // veya alternatif çözüm yolu
+        }
     }
 
     public void startListen() => client.BeginReceive(OnUdpData, new object());
