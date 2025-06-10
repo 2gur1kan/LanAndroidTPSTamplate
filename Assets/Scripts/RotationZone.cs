@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IPointerUpHandler
 {
     private Transform player;
     private Transform aimTarget;
+
+    [SerializeField] private Image cameraBTNImage;
 
     [SerializeField] private float rotationSpeedHorizontal = 0.2f;
     [SerializeField] private float rotationSpeedVertical = 0.2f;
@@ -21,6 +24,10 @@ public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         AlignPlayerToAimTarget();
 
         flag = !flag;
+
+        // tuþa basýldýðýnda rengini deðþitirir
+        if (flag) cameraBTNImage.color = Color.red;
+        else cameraBTNImage.color = Color.white;
     }
 
     public void SetTarget(Transform player, Transform aimTarget)
