@@ -23,6 +23,7 @@ public class Player : NetworkBehaviour
     private float jumpTimerCounter = 1f;
 
     private Vector3 moveInput;
+    private bool moveFlag = true;
 
     public override void OnStartLocalPlayer()
     {
@@ -43,6 +44,9 @@ public class Player : NetworkBehaviour
 
         CustomBTN btn = GameObject.FindGameObjectWithTag("JumpBTN").GetComponent<CustomBTN>();
         if (btn != null) btn.onDown += Jump;
+
+        btn = GameObject.FindGameObjectWithTag("AttackBTN").GetComponent<CustomBTN>();
+        if (btn != null) btn.onDown += SetTriggerPunch;
 
         SetName(DataBaseManager.Instance.Name);
     }
@@ -96,7 +100,7 @@ public class Player : NetworkBehaviour
 
     private void ApplyMovement()
     {
-        if (aimTarget == null) return;
+        if (aimTarget == null || !moveFlag ) return;
 
         Vector3 aimForward = aimTarget.forward;
         aimForward.y = 0f;
@@ -109,6 +113,15 @@ public class Player : NetworkBehaviour
         Vector3 move = (aimForward * moveInput.z + aimRight * moveInput.x).normalized;
 
         Vector3 velocity = new Vector3(move.x * moveSpeed * speedMull, rb.velocity.y, move.z * moveSpeed * speedMull);
+
+        if (!isGrounded) 
+        {
+            velocity += rb.velocity * 2;
+            velocity = velocity.normalized * moveSpeed * speedMull;
+
+            velocity.y = rb.velocity.y;
+        }
+
         rb.velocity = velocity;
 
         
@@ -131,7 +144,7 @@ public class Player : NetworkBehaviour
 
         if (animator == null) return;
 
-        animator.SetTrigger("Jump");
+        animator.SetBool("Jump", true);
         Invoke("ResetJumpTriggerInvoke", .5f);
     }
 
@@ -178,6 +191,46 @@ public class Player : NetworkBehaviour
     }
 
     private void setJumpTimerCounter() => jumpTimerCounter = 1f;
+    private void ResetJumpTriggerInvoke() => animator.SetBool("Jump", false);
+    public void resetMoveFlag() => moveFlag = true;
+
+    #endregion
+
+    #region Attack Systems
+
+    private void SetTriggerPunch()
+    {
+        animator.SetBool("Punch", true);
+
+        Invoke("ResetTriggerPunchInvoke", .1f);
+    }
+    private void ResetTriggerPunchInvoke() => animator.SetBool("Punch", false);
+
+    public void PunchMe(Vector3 attackerPosition)
+    {
+        if (!isServer) return;
+
+        Debug.Log("ben: " + Name);
+
+        TargetApplyKnockback(connectionToClient, attackerPosition);
+    }
+
+    [TargetRpc]
+    public void TargetApplyKnockback(NetworkConnection conn, Vector3 attackerPos)
+    {
+        Debug.Log("Bana vuruldu!");
+
+        moveFlag = false;
+
+        Vector3 dir = (transform.position - attackerPos).normalized;
+        dir.y += 1f;
+
+        rb.velocity = Vector3.zero;
+        rb.AddForce(dir * 31f, ForceMode.Impulse);
+
+        Invoke("resetMoveFlag", .3f);
+    }
+
 
     #endregion
 
@@ -240,8 +293,6 @@ public class Player : NetworkBehaviour
 
         pointer.setText(Name);
     }
-
-    private void ResetJumpTriggerInvoke() => animator.ResetTrigger("Jump");
 
     private void AddMeScoreboardInvoke() => ScoreboardManager.Instance.RegisterPlayer(Name, transform);
 

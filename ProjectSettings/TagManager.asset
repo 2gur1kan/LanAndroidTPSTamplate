@@ -8,6 +8,7 @@ TagManager:
   - SpeedBoostBTN
   - Ip
   - JumpBTN
+  - AttackBTN
   layers:
   - Default
   - TransparentFX
