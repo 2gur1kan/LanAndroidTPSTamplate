@@ -57,14 +57,14 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.37272727
+      - time: 0.2568182
         functionName: EnablePunchBox
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 602815043c3203f4cb399acbf2cec6e7, type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.66565347
+      - time: 0.5429262
         functionName: DisablePunchBox
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 602815043c3203f4cb399acbf2cec6e7, type: 3}

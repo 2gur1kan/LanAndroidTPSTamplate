@@ -102,29 +102,32 @@ public class Player : NetworkBehaviour
     {
         if (aimTarget == null || !moveFlag ) return;
 
-        Vector3 aimForward = aimTarget.forward;
+        Vector3 aimForward = aimTarget.forward.normalized;
         aimForward.y = 0f;
         aimForward.Normalize();
 
-        Vector3 aimRight = aimTarget.right;
+        Vector3 aimRight = aimTarget.right.normalized;
         aimRight.y = 0f;
         aimRight.Normalize();
 
-        Vector3 move = (aimForward * moveInput.z + aimRight * moveInput.x).normalized;
+        Vector3 move = (aimForward * moveInput.z + aimRight * moveInput.x);
 
         Vector3 velocity = new Vector3(move.x * moveSpeed * speedMull, rb.velocity.y, move.z * moveSpeed * speedMull);
 
-        if (!isGrounded) 
+        if (!isGrounded)
         {
-            velocity += rb.velocity * 2;
-            velocity = velocity.normalized * moveSpeed * speedMull;
+            velocity = Vector3.MoveTowards(
+                new Vector3(rb.velocity.x, 0, rb.velocity.z),
+                new Vector3(velocity.x, 0, velocity.z),
+                Time.fixedDeltaTime * moveSpeed / .5f
+            );
 
             velocity.y = rb.velocity.y;
         }
 
         rb.velocity = velocity;
 
-        
+
         if (animator == null) return;
 
         Vector3 localMove = transform.InverseTransformDirection(move);

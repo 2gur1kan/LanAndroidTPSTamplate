@@ -38,7 +38,7 @@ public class UDPBroadcaster : MonoBehaviour
 
     private void Broadcast()
     {
-        string message = $"HelloClient::{GetLocalIPAddress()}";
+        string message = $"{broadcastMessage}::{GetLocalIPAddress()}";
         byte[] data = Encoding.UTF8.GetBytes(message);
         udpClient.Send(data, data.Length, endPoint);
     }

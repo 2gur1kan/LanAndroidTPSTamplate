@@ -346,8 +346,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraBTNImage: {fileID: 1321573238}
-  rotationSpeedHorizontal: 0.2
-  rotationSpeedVertical: 0.2
+  rotationSpeedHorizontal: 0.25
+  rotationSpeedVertical: 0.25
   pitchClampMin: -45
   pitchClampMax: 45
 --- !u!1 &127129468
@@ -2115,7 +2115,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.85
+  m_fontSize: 40.25
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3439,7 +3439,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 150, y: 150}
+  m_SizeDelta: {x: 225, y: 225}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1859776418
 MonoBehaviour:

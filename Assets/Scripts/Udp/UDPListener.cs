@@ -8,6 +8,7 @@ using System.Collections.Generic;
 public class UDPListener : MonoBehaviour
 {
     public int listenPort = 8888;
+    public string broadcastMessage = "HelloClient";
     private UdpClient client;
     private bool listening = true;
 
@@ -37,7 +38,7 @@ public class UDPListener : MonoBehaviour
 
         string received = Encoding.UTF8.GetString(data);
 
-        if (received.StartsWith("HelloClient::"))
+        if (received.StartsWith($"{broadcastMessage}::"))
         {
             string ipAddress = received.Split("::")[1];
             Debug.Log("Host bulundu: " + ipAddress);
