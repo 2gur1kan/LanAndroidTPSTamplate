@@ -60,14 +60,14 @@ ModelImporter:
       - time: 0.2568182
         functionName: EnablePunchBox
         data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 602815043c3203f4cb399acbf2cec6e7, type: 3}
+        objectReferenceParameter: {fileID: 11500000, guid: ff580686c1e9359498548e7a6beaaa20, type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.5429262
         functionName: DisablePunchBox
         data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 602815043c3203f4cb399acbf2cec6e7, type: 3}
+        objectReferenceParameter: {fileID: 11500000, guid: ff580686c1e9359498548e7a6beaaa20, type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
