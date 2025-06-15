@@ -13,3 +13,7 @@ MonoBehaviour:
   m_Name: Data Base
   m_EditorClassIdentifier: 
   Name: Player
+  weapons:
+  - name: 1
+    type: 1
+    go: {fileID: 9182609717624478720, guid: 5a0b1282c5db10f418b3f97b3f98e926, type: 3}

@@ -15,4 +15,6 @@ public class DataBaseManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(this);
     }
+
+    public Weapon GetWeapon(WeaponName WN) => DB.weapons.Find(gg => gg.name == WN);
 }

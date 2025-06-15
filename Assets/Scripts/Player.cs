@@ -55,6 +55,8 @@ public class Player : NetworkBehaviour
     {
         Invoke("AddMeScoreboardInvoke", 2f); // 2 olamsýnýn nedeni ne olur ne olamz belki isimler geç gelir diye
 
+        AttachWeaponToHand(WeaponName.Pistol);
+
         if (!isLocalPlayer)
         {
             Invoke("SetPointerInvoke", 2f); // diðer oyuncularda pointer oluþturur
@@ -234,6 +236,42 @@ public class Player : NetworkBehaviour
         Invoke("resetMoveFlag", .3f);
     }
 
+
+    #endregion
+
+    #region Weapon Systems
+
+    [SerializeField] private GameObject WeaponPref;
+    [SerializeField] private WeaponName weaponName;
+    [SerializeField] private WeaponType weaponType;
+
+    public void AttachWeaponToHand(WeaponName gg)
+    {
+        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        if (rightHand == null) return;
+
+        if(gg == WeaponName.None)
+        {
+            Destroy(WeaponPref);
+            SetWeaponAnimator(WeaponType.None);
+            return;
+        }
+
+        Weapon weapon = DataBaseManager.Instance.GetWeapon(gg);
+
+        SetWeaponAnimator(weapon.type);
+        weaponName = gg;
+
+        if (WeaponPref != null) Destroy(WeaponPref);
+
+        WeaponPref = Instantiate(weapon.go, rightHand);
+
+        WeaponPref.transform.localPosition = weapon.go.transform.localPosition;
+        WeaponPref.transform.localRotation = weapon.go.transform.localRotation;
+        WeaponPref.transform.localScale = weapon.go.transform.localScale;
+    }
+
+    private void SetWeaponAnimator(WeaponType WT) => animator.SetInteger("Weapon", (int)WT);
 
     #endregion
 

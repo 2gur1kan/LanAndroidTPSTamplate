@@ -893,7 +893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff580686c1e9359498548e7a6beaaa20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aimRig: {fileID: 0}
+  aimRig: {fileID: 2202840470366906195}
   punchBox: {fileID: 4752074007389529570}
 --- !u!4 &3473460520354699504 stripped
 Transform:
