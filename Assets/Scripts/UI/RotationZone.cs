@@ -16,6 +16,7 @@ public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
 
     private bool isDragging = false;
     private float currentPitch = 0f;
+    private float currentYaw = 0f;
 
     private bool flag = false;
 
@@ -54,22 +55,35 @@ public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
     {
         if (!isDragging || player == null || aimTarget == null) return;
 
-        // YATAY dönüþ
+        // --- YATAY DÖNÜÞ ---
         float deltaX = eventData.delta.x;
-        Vector3 playerRot = Vector3.up * deltaX * rotationSpeedHorizontal;
+        float power = Mathf.Sign(deltaX) * Mathf.Pow(Mathf.Abs(deltaX), 1.2f);
+        float targetYaw = power * rotationSpeedHorizontal;
 
-        if (flag) aimTarget.Rotate(playerRot); // aimTarget döner
-        else player.Rotate(playerRot); // normalde player döner
+        currentYaw = Mathf.Lerp(currentYaw, targetYaw, Time.deltaTime * 15f);
+        Vector3 playerRot = Vector3.up * currentYaw;
 
-        // DÝKEY aimTarget pitch (yukarý-aþaðý) döner
+        if (flag) aimTarget.Rotate(playerRot, Space.Self);
+        else player.Rotate(playerRot, Space.Self);
+
+        // --- DÝKEY DÖNÜÞ ---
         float deltaY = -eventData.delta.y;
         currentPitch += deltaY * rotationSpeedVertical;
-        currentPitch = Mathf.Clamp(currentPitch, pitchClampMin, pitchClampMax);
+
+        // currentPitch'ý clamp yaparken, mevcut açýyý baz al, ekle, sonra clampla
+        float newPitch = aimTarget.localEulerAngles.x;
+
+        // Unity localEulerAngles x açýsý 0-360 aralýðýnda, negatif açý için düzelt
+        if (newPitch > 180f) newPitch -= 360f;
+
+        newPitch += deltaY * rotationSpeedVertical;
+        newPitch = Mathf.Clamp(newPitch, pitchClampMin, pitchClampMax);
 
         Vector3 newEuler = aimTarget.localEulerAngles;
-        newEuler.x = currentPitch;
+        newEuler.x = newPitch;
         aimTarget.localEulerAngles = newEuler;
     }
+
 
     public void AlignPlayerToAimTarget()
     {

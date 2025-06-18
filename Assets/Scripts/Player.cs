@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using Cinemachine;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class Player : NetworkBehaviour
@@ -12,11 +13,13 @@ public class Player : NetworkBehaviour
 
     [Header("References (Referanslar)")]
     [SerializeField] private Transform aimTarget;
+    [SerializeField] private Transform gunAim;
 
     private Joystick joystick;
     private Rigidbody rb;
     private Collider col;
     [SerializeField] private Animator animator;
+    [SerializeField] private PlayerAnimationController pac;
 
     private bool isGrounded;
     private bool canJump;
@@ -35,8 +38,8 @@ public class Player : NetworkBehaviour
 
         if (vcam != null)
         {
-            vcam.Follow = aimTarget;
-            vcam.LookAt = this.transform;
+            vcam.Follow = aimTarget.GetChild(0).transform;
+            vcam.LookAt = aimTarget;
         }
 
         RotationZone rotZone = FindObjectOfType<RotationZone>();
@@ -46,7 +49,7 @@ public class Player : NetworkBehaviour
         if (btn != null) btn.onDown += Jump;
 
         btn = GameObject.FindGameObjectWithTag("AttackBTN").GetComponent<CustomBTN>();
-        if (btn != null) btn.onDown += SetTriggerPunch;
+        if (btn != null) btn.onDown += CalcualteAttackType;
 
         SetName(DataBaseManager.Instance.Name);
     }
@@ -203,6 +206,72 @@ public class Player : NetworkBehaviour
 
     #region Attack Systems
 
+    [Header("AttackSystems")]
+    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private int currentHealth = 100;
+
+    private bool attackFlag = false;
+
+    public void CalcualteAttackType()
+    {
+        switch (weaponType)
+        {
+            case WeaponType.Pistol:
+                UseWeapon();
+                break;
+
+            case WeaponType.Rifle:
+                UseWeapon();
+                break;
+
+            case WeaponType.None:
+                SetTriggerPunch();
+                break;
+        }
+    }
+
+    public void UseWeapon()
+    {
+        if (attackFlag) return;
+
+        attackFlag = true;
+        Invoke("resetAttackFlag", fireRate + .05f);
+
+        Crossair.Instance.RotateCrossair(fireRate);
+        BounceAimTarget(fireRate);
+
+        if (WeaponSC != null) CmdUseWeapon(gunAim.position);
+    }
+
+    [Command]
+    public void CmdUseWeapon(Vector3 targetPos)
+    {
+        WeaponSC.Fire(targetPos);
+    }
+
+    private void resetAttackFlag() => attackFlag = false;
+    public void BounceAimTarget(float fireRate, float bounceHeight = 5f) => StartCoroutine(BounceRotationRoutine(fireRate, bounceHeight));
+
+    private IEnumerator BounceRotationRoutine(float fireRate, float bounceAngle)
+    {
+        Quaternion originalRot = aimTarget.rotation;
+        Quaternion targetRot = originalRot * Quaternion.Euler(-bounceAngle, 0f, 0f);
+
+        float duration = fireRate > .1f ? .09f : fireRate / 3;
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            float t = timer / duration;
+            aimTarget.rotation = Quaternion.Slerp(originalRot, targetRot, t);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+
+    /// ///////////////// punch
+
     private void SetTriggerPunch()
     {
         animator.SetBool("Punch", true);
@@ -214,8 +283,6 @@ public class Player : NetworkBehaviour
     public void PunchMe(Vector3 attackerPosition)
     {
         if (!isServer) return;
-
-        Debug.Log("ben: " + Name);
 
         TargetApplyKnockback(connectionToClient, attackerPosition);
     }
@@ -236,21 +303,22 @@ public class Player : NetworkBehaviour
         Invoke("resetMoveFlag", .3f);
     }
 
-
-    #endregion
-
     #region Weapon Systems
 
+    [Header("Weapon")]
     [SerializeField] private GameObject WeaponPref;
+    [SerializeField] private WeaponController WeaponSC;
     [SerializeField] private WeaponName weaponName;
     [SerializeField] private WeaponType weaponType;
+
+    [SerializeField] private float fireRate = 1f;
 
     public void AttachWeaponToHand(WeaponName gg)
     {
         Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
         if (rightHand == null) return;
 
-        if(gg == WeaponName.None)
+        if (gg == WeaponName.None)
         {
             Destroy(WeaponPref);
             SetWeaponAnimator(WeaponType.None);
@@ -261,6 +329,8 @@ public class Player : NetworkBehaviour
 
         SetWeaponAnimator(weapon.type);
         weaponName = gg;
+        weaponType = weapon.type;
+        fireRate = weapon.fireRate;
 
         if (WeaponPref != null) Destroy(WeaponPref);
 
@@ -269,9 +339,13 @@ public class Player : NetworkBehaviour
         WeaponPref.transform.localPosition = weapon.go.transform.localPosition;
         WeaponPref.transform.localRotation = weapon.go.transform.localRotation;
         WeaponPref.transform.localScale = weapon.go.transform.localScale;
+
+        WeaponSC = WeaponPref.GetComponent<WeaponController>();
     }
 
     private void SetWeaponAnimator(WeaponType WT) => animator.SetInteger("Weapon", (int)WT);
+
+    #endregion
 
     #endregion
 

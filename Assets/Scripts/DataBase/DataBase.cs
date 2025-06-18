@@ -16,6 +16,8 @@ public class Weapon
     public WeaponName name;
     public WeaponType type;
     public GameObject go;
+
+    public float fireRate;
 }
 
 public enum WeaponName
