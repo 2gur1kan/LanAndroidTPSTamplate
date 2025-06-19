@@ -7,12 +7,13 @@ public class WeaponController : NetworkBehaviour
     [SerializeField] private float BulletSpeed = 31f;
     [SerializeField] private int Damage = 20;
 
+    public TeamName team;
+
     [Server]
     public void Fire(Vector3 Target)
     {
         if (Bullet == null) return;
 
-        // havada giden merimi oluþtur
         Vector3 direction = (Target - transform.position).normalized;
 
         GameObject bulletInstance = Instantiate(Bullet, transform.position, Quaternion.identity);
@@ -24,11 +25,11 @@ public class WeaponController : NetworkBehaviour
 
         Destroy(bulletInstance, 2f);
 
-        // merminin çarptýðý yer playersa hasr ver deðiðlse bir delik oluþtur
+        // merminin çarptýðý yer playersa hasar ver deðilse bir delik oluþtur
         Ray ray = new Ray(transform.position, direction);
         if (Physics.Raycast(ray, out RaycastHit hitInfo, 100f))
         {
-            if (hitInfo.collider.CompareTag("Player"))
+            if (hitInfo.collider.CompareTag("Player") && hitInfo.transform.GetComponent<Player>().TeamName != team)
             {
                 hitInfo.collider.GetComponent<Player>().TakeDamage(Damage);
                 return;
@@ -41,14 +42,14 @@ public class WeaponController : NetworkBehaviour
             // Patlama alaný
             GameObject explosion = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             explosion.transform.position = hitInfo.point;
-            explosion.transform.localScale = Vector3.one * 1f; // Patlama yarýçapý
+            explosion.transform.localScale = Vector3.one;
             explosion.GetComponent<Collider>().isTrigger = true;
             explosion.GetComponent<MeshRenderer>().enabled = false;
 
             Collider[] hitColliders = Physics.OverlapSphere(hitInfo.point, 1.5f);
-            foreach (var col in hitColliders)
+            foreach (Collider col in hitColliders)
             {
-                if (col.CompareTag("Player"))
+                if (col.CompareTag("Player") && col.GetComponent<Player>().TeamName != team)
                 {
                     col.GetComponent<Player>()?.TakeDamage(Damage / 2);
                 }

@@ -204,15 +204,19 @@ public class Player : NetworkBehaviour
     #region Attack Systems
 
     [Header("AttackSystems")]
+    [SerializeField] private TeamName team;
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int currentHealth = 100;
 
-    public void TakeDamage(int  damage)
+    public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        Debug.Log(currentHealth);
 
         if (currentHealth < 0) Debug.Log("Öldüm Öldüm");
     }
+
+    public TeamName TeamName { get => team; set => team = value; }
 
     private bool attackFlag = false;
 
@@ -272,7 +276,6 @@ public class Player : NetworkBehaviour
             yield return null;
         }
     }
-
 
     /// ///////////////// punch
 
@@ -345,6 +348,7 @@ public class Player : NetworkBehaviour
         WeaponPref.transform.localScale = weapon.go.transform.localScale;
 
         WeaponSC = WeaponPref.GetComponent<WeaponController>();
+        WeaponSC.team = team;
     }
 
     private void SetWeaponAnimator(WeaponType WT) => animator.SetInteger("Weapon", (int)WT);
