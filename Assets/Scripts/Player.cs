@@ -38,7 +38,7 @@ public class Player : NetworkBehaviour
 
         if (vcam != null)
         {
-            vcam.Follow = aimTarget.GetChild(0).transform;
+            vcam.Follow = aimTarget;
             vcam.LookAt = aimTarget;
         }
 
@@ -98,9 +98,6 @@ public class Player : NetworkBehaviour
     private void HandleInput()
     {
         moveInput = new Vector3(joystick.Horizontal, 0f, joystick.Vertical);
-
-        if (moveInput != Vector3.zero) animator.SetBool("Run", true);
-        else animator.SetBool("Run", false);
     }
 
     private void ApplyMovement()
@@ -209,6 +206,13 @@ public class Player : NetworkBehaviour
     [Header("AttackSystems")]
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int currentHealth = 100;
+
+    public void TakeDamage(int  damage)
+    {
+        currentHealth -= damage;
+
+        if (currentHealth < 0) Debug.Log("Öldüm Öldüm");
+    }
 
     private bool attackFlag = false;
 

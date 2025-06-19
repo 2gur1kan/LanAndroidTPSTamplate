@@ -17,4 +17,6 @@ public class DataBaseManager : MonoBehaviour
     }
 
     public Weapon GetWeapon(WeaponName WN) => DB.weapons.Find(gg => gg.name == WN);
+
+    public GameObject bulletHole { get => DB.BulletHole; }
 }

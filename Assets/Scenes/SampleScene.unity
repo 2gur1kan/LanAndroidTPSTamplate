@@ -346,8 +346,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraBTNImage: {fileID: 1321573238}
-  rotationSpeedHorizontal: 0.04
-  rotationSpeedVertical: 0.03
+  rotationSpeedHorizontal: 0.1
+  rotationSpeedVertical: 0.1
   pitchClampMin: -45
   pitchClampMax: 45
 --- !u!1 &127129468
@@ -2373,7 +2373,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 40
+  field of view: 20
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -2480,7 +2480,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 40
+    FieldOfView: 20
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000

@@ -8,6 +8,8 @@ public class DataBase : ScriptableObject
     public string Name;
 
     public List<Weapon> weapons;
+
+    public GameObject BulletHole;
 }
 
 [System.Serializable]
