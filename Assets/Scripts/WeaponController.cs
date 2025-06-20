@@ -8,6 +8,7 @@ public class WeaponController : NetworkBehaviour
     [SerializeField] private int Damage = 20;
 
     public TeamName team;
+    public Player CurrentPlayer;
 
     [Server]
     public void Fire(Vector3 Target)
@@ -31,7 +32,7 @@ public class WeaponController : NetworkBehaviour
         {
             if (hitInfo.collider.CompareTag("Player") && hitInfo.transform.GetComponent<Player>().TeamName != team)
             {
-                hitInfo.collider.GetComponent<Player>().TakeDamage(Damage);
+                if (hitInfo.collider.GetComponent<Player>().TakeDamage(Damage)) CurrentPlayer.Score++;
                 return;
             }
 
@@ -51,7 +52,7 @@ public class WeaponController : NetworkBehaviour
             {
                 if (col.CompareTag("Player") && col.GetComponent<Player>().TeamName != team)
                 {
-                    col.GetComponent<Player>()?.TakeDamage(Damage / 2);
+                    if (col.GetComponent<Player>()?.TakeDamage(Damage / 2) ?? false) CurrentPlayer.Score++;
                 }
             }
 

@@ -34,13 +34,7 @@ public class Player : NetworkBehaviour
 
         joystick = FindObjectOfType<Joystick>();
 
-        CinemachineVirtualCamera vcam = FindObjectOfType<CinemachineVirtualCamera>();
-
-        if (vcam != null)
-        {
-            vcam.Follow = aimTarget;
-            vcam.LookAt = aimTarget;
-        }
+        setCamera();
 
         RotationZone rotZone = FindObjectOfType<RotationZone>();
         if (rotZone != null) rotZone.SetTarget(this.transform,this.aimTarget);
@@ -54,10 +48,22 @@ public class Player : NetworkBehaviour
         SetName(DataBaseManager.Instance.Name);
     }
 
+    /// <summary>
+    /// kamerayý karakter öldükten sorna ayarlayabilemk için 
+    /// </summary>
+    public void setCamera()
+    {
+        CinemachineVirtualCamera vcam = FindObjectOfType<CinemachineVirtualCamera>();
+
+        if (vcam != null)
+        {
+            vcam.Follow = aimTarget;
+            vcam.LookAt = aimTarget;
+        }
+    }
+
     private void Start()
     {
-        Invoke("AddMeScoreboardInvoke", 2f); // 2 olamsýnýn nedeni ne olur ne olamz belki isimler geç gelir diye
-
         AttachWeaponToHand(WeaponName.Pistol);
 
         if (!isLocalPlayer)
@@ -90,7 +96,9 @@ public class Player : NetworkBehaviour
     {
         if (pointer != null) pointer.Destroy();
 
-        if (ScoreboardManager.Instance != null) ScoreboardManager.Instance.RemovePlayer(transform);
+        if (GameManager.Instance != null) GameManager.Instance.RemovePlayer(this);
+
+        Debug.Log("karakter yok olup olmadýðýný gam managera taþý");
     }
 
     #region Movement
@@ -204,19 +212,36 @@ public class Player : NetworkBehaviour
     #region Attack Systems
 
     [Header("AttackSystems")]
-    [SerializeField] private TeamName team;
-    [SerializeField] private int maxHealth = 100;
-    [SerializeField] private int currentHealth = 100;
+    [SyncVar] [SerializeField] private TeamName team;
+    [SyncVar] [SerializeField] private int maxHealth = 100;
+    [SyncVar] [SerializeField] private int currentHealth = 100;
+    [SyncVar] private int score;
 
-    public void TakeDamage(int damage)
+    [Server]
+    public bool TakeDamage(int damage)
     {
         currentHealth -= damage;
         Debug.Log(currentHealth);
 
-        if (currentHealth < 0) Debug.Log("Öldüm Öldüm");
+        if (currentHealth < 0)
+        {
+            Debug.Log("Öldüm Öldüm");
+
+            RpcUpdateScoreboard();
+            return true;
+        }
+
+        return false;
+    }
+
+    [ClientRpc]
+    private void RpcUpdateScoreboard()
+    {
+        ScoreboardManager.Instance.UpdateScoreboard();
     }
 
     public TeamName TeamName { get => team; set => team = value; }
+    public int Score { get => score; set => score = value; }
 
     private bool attackFlag = false;
 
@@ -349,6 +374,7 @@ public class Player : NetworkBehaviour
 
         WeaponSC = WeaponPref.GetComponent<WeaponController>();
         WeaponSC.team = team;
+        WeaponSC.CurrentPlayer = this;
     }
 
     private void SetWeaponAnimator(WeaponType WT) => animator.SetInteger("Weapon", (int)WT);
@@ -416,8 +442,6 @@ public class Player : NetworkBehaviour
 
         pointer.setText(Name);
     }
-
-    private void AddMeScoreboardInvoke() => ScoreboardManager.Instance.RegisterPlayer(Name, transform);
 
     #endregion
 }

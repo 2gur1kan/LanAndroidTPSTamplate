@@ -6,10 +6,13 @@ using UnityEngine;
 public class DataBase : ScriptableObject
 {
     public string Name;
+    public TeamName LocalTeam;
 
     public List<Weapon> weapons;
 
     public GameObject BulletHole;
+
+    public List<TeamPlayerPref> playerPrefs;
 }
 
 [System.Serializable]
@@ -39,4 +42,11 @@ public enum TeamName
 {
     A,
     B
+}
+
+[System.Serializable]
+public class TeamPlayerPref
+{
+    public TeamName team;
+    public GameObject pref;
 }

@@ -19,3 +19,8 @@ MonoBehaviour:
     go: {fileID: 9182609717624478720, guid: 5a0b1282c5db10f418b3f97b3f98e926, type: 3}
     fireRate: 1
   BulletHole: {fileID: 6145072959795530190, guid: 37c1779fabd88c74399abacfff3e6704, type: 3}
+  playerPrefs:
+  - team: 0
+    pref: {fileID: 266872914461160277, guid: bb1b5615501518f49a0f8327e7b64244, type: 3}
+  - team: 1
+    pref: {fileID: 266872914461160277, guid: bb1b5615501518f49a0f8327e7b64244, type: 3}

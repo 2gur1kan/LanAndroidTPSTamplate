@@ -9,6 +9,7 @@ public class DataBaseManager : MonoBehaviour
     [SerializeField] private DataBase DB;
 
     public string Name { get => DB.Name; set => DB.Name = value; }
+    public TeamName Team { get => DB.LocalTeam; set => DB.LocalTeam = value; }
 
     private void Awake()
     {
@@ -17,6 +18,7 @@ public class DataBaseManager : MonoBehaviour
     }
 
     public Weapon GetWeapon(WeaponName WN) => DB.weapons.Find(gg => gg.name == WN);
+    public GameObject GetPlayerPref(TeamName TN) => DB.playerPrefs.Find(gg => gg.team == TN)?.pref;
 
     public GameObject bulletHole { get => DB.BulletHole; }
 }
