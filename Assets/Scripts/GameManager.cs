@@ -15,47 +15,39 @@ public class GameManager : NetworkBehaviour
         else Destroy(this);
     }
 
-    public override void OnStartLocalPlayer()
+    [Server]
+    public void RegisterPlayer(NetworkConnectionToClient conn, string playerName)
     {
-        PlayerInfo pInfo = new PlayerInfo
+        TeamName team = (players.Count % 2 == 0) ? TeamName.A : TeamName.B;
+
+        players.Add(new PlayerInfo
         {
-            playerName = DataBaseManager.Instance.Name,
-            player = null,
-        };
+            connectionId = conn.connectionId,
+            playerName = playerName,
+            team = team
+        });
 
-        players.Add(pInfo);
-        int index = players.IndexOf(pInfo);
+        ScoreboardManager.Instance.SetEntry(playerName);
+        ScoreboardManager.Instance.UpdateScoreboard();
 
-        AssignPlayerToTeam();
-
-        DataBaseManager.Instance.Team = players[index].team;
+        SpawnPlayer(conn, playerName, team);
     }
 
     [Server]
-    public void AssignPlayerToTeam()
+    private void SpawnPlayer(NetworkConnectionToClient conn, string playerName, TeamName team)
     {
-        for (int i = 0; i < players.Count; i++)
-        {
-            players[i].team = (i % 2 == 0) ? TeamName.B : TeamName.A;
-        }
-    }
+        GameObject prefab = DataBaseManager.Instance.GetPlayerPref(team);
+        Vector3 spawnPos = GetSpawnPoint(team);
 
-    [Server]
-    public void StartGame()
-    {
-        foreach (PlayerInfo p in players)
-        {
-            NetworkConnectionToClient conn = p.player.connectionToClient;
-            GameObject prefab = DataBaseManager.Instance.GetPlayerPref(p.team);
+        GameObject playerObj = Instantiate(prefab, spawnPos, Quaternion.identity);
 
-            Vector3 spawnPos = GetSpawnPoint(p.team);
-            GameObject newPlayer = Instantiate(prefab, spawnPos, Quaternion.identity);
+        NetworkServer.ReplacePlayerForConnection(conn, playerObj, ReplacePlayerOptions.Destroy);
 
-            NetworkServer.ReplacePlayerForConnection(conn, newPlayer, ReplacePlayerOptions.Destroy);// karakteri siler ve yenisini oluþturur
+        int gg = players.FindIndex(gg => gg.connectionId == conn.connectionId);
 
-            p.player = newPlayer.GetComponent<Player>();
-            p.player.TeamName = p.team;
-        }
+        players[gg].player = playerObj.GetComponent<Player>();
+        players[gg].player.Name = playerName;
+        players[gg].player.TeamName = team;
     }
 
     private Vector3 GetSpawnPoint(TeamName team)
@@ -63,38 +55,20 @@ public class GameManager : NetworkBehaviour
         return team == TeamName.A ? new Vector3(-5, 0, 0) : new Vector3(5, 0, 0);
     }
 
-    public void RegisterPlayer(string name, Player gg)
+    [Server]
+    private void ChangeTeam(NetworkConnectionToClient conn)
     {
-        PlayerInfo pInfo = new PlayerInfo
-        {
-            playerName = name,
-            player = gg,
-        };
+        int index = players.FindIndex(gg => gg.connectionId == conn.connectionId);
 
-        players.Add(pInfo);
+        players[index].team = players[index].team == TeamName.A ? TeamName.B : TeamName.A;
 
-        ScoreboardManager.Instance.SetEntry(name);
-
-        ScoreboardManager.Instance.UpdateScoreboard();
-    }
-
-    public void RemovePlayer(Player player)
-    {
-        PlayerInfo p = players.Find(gg => gg.player == player);
-
-        if (p != null)
-        {
-            int index = players.IndexOf(p);
-
-            ScoreboardManager.Instance.RemovePlayer(index);
-
-            players.RemoveAt(index);
-        }
+        SpawnPlayer(conn, players[index].playerName, players[index].team);
     }
 }
 
 public class PlayerInfo
 {
+    public int connectionId;
     public string playerName;
     public Player player;
     public TeamName team;

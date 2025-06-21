@@ -46,6 +46,8 @@ public class Player : NetworkBehaviour
         if (btn != null) btn.onDown += CalcualteAttackType;
 
         SetName(DataBaseManager.Instance.Name);
+
+        DataBaseManager.Instance.Team = team;
     }
 
     /// <summary>
@@ -96,7 +98,9 @@ public class Player : NetworkBehaviour
     {
         if (pointer != null) pointer.Destroy();
 
-        if (GameManager.Instance != null) GameManager.Instance.RemovePlayer(this);
+        return;
+
+        //if (GameManager.Instance != null) GameManager.Instance.RemovePlayer(this);
 
         Debug.Log("karakter yok olup olmadýðýný gam managera taþý");
     }
@@ -436,7 +440,7 @@ public class Player : NetworkBehaviour
 
     private void SetPointerInvoke()
     {
-        if (PointersPanelController.Instance == null) return;
+        if (PointersPanelController.Instance == null && team != DataBaseManager.Instance.Team) return;
 
         pointer = PointersPanelController.Instance.CreateEnemyPointer(transform);
 

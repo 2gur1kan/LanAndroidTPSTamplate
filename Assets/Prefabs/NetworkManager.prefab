@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listenPort: 8888
+  broadcastMessage: HelloClient
 --- !u!114 &6336995322083823424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,11 +90,12 @@ MonoBehaviour:
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
-  playerPrefab: {fileID: 266872914461160277, guid: bb1b5615501518f49a0f8327e7b64244, type: 3}
+  playerPrefab: {fileID: 3327288720782642210, guid: 181e8537fc191b242bba0362915f0ab8, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 8685058500835890803, guid: 88fc3316708258a4eb95c439b7f09792, type: 3}
+  - {fileID: 266872914461160277, guid: bb1b5615501518f49a0f8327e7b64244, type: 3}
+  - {fileID: 6145072959795530190, guid: 37c1779fabd88c74399abacfff3e6704, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

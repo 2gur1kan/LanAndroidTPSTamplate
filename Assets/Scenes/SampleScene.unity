@@ -4006,6 +4006,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1449414323
       objectReference: {fileID: 0}
+    - target: {fileID: 2339297589796425599, guid: 68b60276d3d5e4344876ddff352ccd65, type: 3}
+      propertyPath: syncDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4087369587549114076, guid: 68b60276d3d5e4344876ddff352ccd65, type: 3}
       propertyPath: m_LocalPosition.x
       value: -102.66542
@@ -4062,6 +4066,6 @@ SceneRoots:
   - {fileID: 992694592}
   - {fileID: 705507995}
   - {fileID: 1890772455}
+  - {fileID: 3580785567247858330}
   - {fileID: 585480868}
   - {fileID: 319386787}
-  - {fileID: 3580785567247858330}
