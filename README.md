@@ -8,4 +8,9 @@ Main Menu scene :
 When the host is created, it starts a call on port 8888 and when you start listening to this call, you will automatically connect to the host.
 
 sample scene :
-![SampleScene](https://github.com/user-attachments/assets/4a587f5a-8479-4c0d-b6d2-f21af621d559)
+![Image Sequence_007_0000](https://github.com/user-attachments/assets/b9e8d940-843c-43cf-8b3b-b0a67edc5a45)
+![Image Sequence_010_0000](https://github.com/user-attachments/assets/d95cd366-9334-48b9-9a07-c3b9fbf31809)
+Has basic character movements and aiming system.
+
+![Image Sequence_008_0000](https://github.com/user-attachments/assets/d8b850c8-0173-44d6-a5d9-ac1354193906)
+IK Bones was used for the aiming system.
