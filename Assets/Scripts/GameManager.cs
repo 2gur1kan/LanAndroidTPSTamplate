@@ -66,6 +66,7 @@ public class GameManager : NetworkBehaviour
     }
 }
 
+[System.Serializable]
 public class PlayerInfo
 {
     public int connectionId;

@@ -53,7 +53,12 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   Bullet: {fileID: 183844, guid: c6a5af2ca13ceb043a1375ffd988f43e, type: 3}
+  FireEffect: {fileID: 1212378632092643549, guid: 3672c5e279d9c724f8da780665ada3bf, type: 3}
+  ExplosionEffect: {fileID: 9131415315967837898, guid: 845eea5382f52754d8bc521d8d820ed8, type: 3}
   BulletSpeed: 31
+  Damage: 20
+  team: 0
+  CurrentPlayer: {fileID: 0}
 --- !u!114 &-1149857140890249156
 MonoBehaviour:
   m_ObjectHideFlags: 0

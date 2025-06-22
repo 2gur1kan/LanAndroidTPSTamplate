@@ -46,8 +46,6 @@ public class Player : NetworkBehaviour
         if (btn != null) btn.onDown += CalcualteAttackType;
 
         SetName(DataBaseManager.Instance.Name);
-
-        DataBaseManager.Instance.Team = team;
     }
 
     /// <summary>
@@ -77,6 +75,9 @@ public class Player : NetworkBehaviour
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
         rb.freezeRotation = true;
+
+        DataBaseManager.Instance.Team = team;
+        gameObject.layer = LayerMask.NameToLayer(team == TeamName.A ? "TeamA" : "TeamB");
     }
 
     private void Update()
@@ -440,7 +441,7 @@ public class Player : NetworkBehaviour
 
     private void SetPointerInvoke()
     {
-        if (PointersPanelController.Instance == null && team != DataBaseManager.Instance.Team) return;
+        if (PointersPanelController.Instance == null || team != DataBaseManager.Instance.Team) return;
 
         pointer = PointersPanelController.Instance.CreateEnemyPointer(transform);
 
