@@ -115,7 +115,7 @@ public class Player : NetworkBehaviour
 
     private void ApplyMovement()
     {
-        if (aimTarget == null || !moveFlag ) return;
+        if (aimTarget == null || !moveFlag  || dead) return;
 
         Vector3 aimForward = aimTarget.forward.normalized;
         aimForward.y = 0f;
@@ -154,7 +154,7 @@ public class Player : NetworkBehaviour
 
     private void Jump()
     {
-        if (!canJump) return;
+        if (!canJump || dead) return;
 
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
@@ -221,6 +221,7 @@ public class Player : NetworkBehaviour
     [SyncVar] [SerializeField] private int maxHealth = 100;
     [SyncVar] [SerializeField] private int currentHealth = 100;
     [SyncVar] private int score;
+    [SyncVar(hook = nameof(OnDeadChanged))] private bool dead = false;
 
     [Server]
     public bool TakeDamage(int damage)
@@ -237,6 +238,14 @@ public class Player : NetworkBehaviour
         }
 
         return false;
+    }
+
+    private void OnDeadChanged(bool oldValue, bool newValue)
+    {
+        if (newValue == true && oldValue != newValue)
+        {
+            dead = newValue;
+        }
     }
 
     [ClientRpc]
