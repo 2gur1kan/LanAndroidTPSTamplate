@@ -66,18 +66,19 @@ public class Player : NetworkBehaviour
     {
         AttachWeaponToHand(weaponName);
 
+        rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
+        rb.freezeRotation = true;
+
+        gameObject.layer = LayerMask.NameToLayer(team == TeamName.A ? "TeamA" : "TeamB");
+
         if (!isLocalPlayer)
         {
             Invoke("SetPointerInvoke", 2f); // diðer oyuncularda pointer oluþturur
             return;
         }
 
-        rb = GetComponent<Rigidbody>();
-        col = GetComponent<Collider>();
-        rb.freezeRotation = true;
-
         DataBaseManager.Instance.Team = team;
-        gameObject.layer = LayerMask.NameToLayer(team == TeamName.A ? "TeamA" : "TeamB");
     }
 
     private void Update()
@@ -227,11 +228,10 @@ public class Player : NetworkBehaviour
     public bool TakeDamage(int damage)
     {
         currentHealth -= damage;
-        Debug.Log(currentHealth);
 
         if (currentHealth < 0)
         {
-            Debug.Log("Öldüm Öldüm");
+            dead = true;
 
             RpcUpdateScoreboard();
             return true;
@@ -245,6 +245,11 @@ public class Player : NetworkBehaviour
         if (newValue == true && oldValue != newValue)
         {
             dead = newValue;
+
+            col.enabled = false;
+            rb.isKinematic = true;
+
+            pac.SetDead();
         }
     }
 
