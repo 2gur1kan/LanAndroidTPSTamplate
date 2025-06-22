@@ -24,6 +24,9 @@ public class PlayerAnimationController : MonoBehaviour
     {
         animator.enabled = false;
 
+        SetAimRigWeight();
+        aimRig.enabled = false;
+
         SetRagdollState(true);
     }
 

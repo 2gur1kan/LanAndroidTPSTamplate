@@ -19,9 +19,12 @@ public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
     private float currentYaw = 0f;
 
     private bool flag = false;
+    private bool deadFlag = false;
 
-    public void Flag()
+    public void Flag(bool isDead = false)
     {
+        if (deadFlag) return;
+
         AlignPlayerToAimTarget();
 
         flag = !flag;
@@ -29,6 +32,9 @@ public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         // tuþa basýldýðýnda rengini deðþitirir
         if (flag) cameraBTNImage.color = Color.red;
         else cameraBTNImage.color = Color.white;
+
+        deadFlag = isDead;
+        if (deadFlag) flag = true;
     }
 
     public void SetTarget(Transform player, Transform aimTarget)
@@ -77,6 +83,7 @@ public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
         if (newPitch > 180f) newPitch -= 360f;
 
         newPitch += deltaY * rotationSpeedVertical;
+
         newPitch = Mathf.Clamp(newPitch, pitchClampMin, pitchClampMax);
 
         Vector3 newEuler = aimTarget.localEulerAngles;

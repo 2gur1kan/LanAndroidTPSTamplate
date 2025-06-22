@@ -250,6 +250,12 @@ public class Player : NetworkBehaviour
             rb.isKinematic = true;
 
             pac.SetDead();
+
+            if (isLocalPlayer)
+            {
+                RotationZone rotZone = FindObjectOfType<RotationZone>();
+                if (rotZone != null) rotZone.Flag(true);
+            }
         }
     }
 
@@ -266,6 +272,8 @@ public class Player : NetworkBehaviour
 
     public void CalcualteAttackType()
     {
+        if (dead) return;
+
         switch (weaponType)
         {
             case WeaponType.Pistol:
