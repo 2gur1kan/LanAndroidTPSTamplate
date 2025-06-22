@@ -34,7 +34,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [Server]
-    private void SpawnPlayer(NetworkConnectionToClient conn, string playerName, TeamName team)
+    public void SpawnPlayer(NetworkConnectionToClient conn, string playerName, TeamName team)
     {
         GameObject prefab = DataBaseManager.Instance.GetPlayerPref(team);
         Vector3 spawnPos = GetSpawnPoint(team);

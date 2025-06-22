@@ -255,6 +255,8 @@ public class Player : NetworkBehaviour
             {
                 RotationZone rotZone = FindObjectOfType<RotationZone>();
                 if (rotZone != null) rotZone.Flag(true);
+
+                Invoke("CmdRespawnPlayer", 5f);
             }
         }
     }
@@ -263,6 +265,12 @@ public class Player : NetworkBehaviour
     private void RpcUpdateScoreboard()
     {
         ScoreboardManager.Instance.UpdateScoreboard();
+    }
+
+    [Command]
+    private void CmdRespawnPlayer()
+    {
+        GameManager.Instance.SpawnPlayer(connectionToClient,name,team);
     }
 
     public TeamName TeamName { get => team; set => team = value; }
