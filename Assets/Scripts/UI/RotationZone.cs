@@ -45,6 +45,12 @@ public class RotationZone : MonoBehaviour, IDragHandler, IPointerDownHandler, IP
 
         // Eðer 270 üzerindeyse negatif açýya çevir
         if (currentPitch > 180f) currentPitch -= 360f;
+
+        // yeniden doðunca kamera kilidini kaldýrýr
+        deadFlag = false;
+        flag = true;
+
+        Flag();
     }
 
     public void OnPointerDown(PointerEventData eventData)

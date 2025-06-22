@@ -18,6 +18,7 @@ public class Player : NetworkBehaviour
     private Joystick joystick;
     private Rigidbody rb;
     private Collider col;
+    private CinemachineBasicMultiChannelPerlin shakeSC;
     [SerializeField] private Animator animator;
     [SerializeField] private PlayerAnimationController pac;
 
@@ -60,6 +61,9 @@ public class Player : NetworkBehaviour
             vcam.Follow = aimTarget;
             vcam.LookAt = aimTarget;
         }
+
+        if(vcam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>() == null) vcam.AddCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        shakeSC = vcam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
     private void Start()
@@ -236,6 +240,7 @@ public class Player : NetworkBehaviour
             RpcUpdateScoreboard();
             return true;
         }
+        else TRPCCameraShake();
 
         return false;
     }
@@ -311,6 +316,8 @@ public class Player : NetworkBehaviour
         if (WeaponSC != null) CmdUseWeapon(gunAim.position);
 
         SetTriggerPunch();
+
+        CameraShake(true, .15f);
     }
 
     [Command]
@@ -488,6 +495,26 @@ public class Player : NetworkBehaviour
 
         pointer.setText(Name);
     }
+
+    /// //////////////// kamera sallama iþlevleri
+
+    [TargetRpc]
+    private void TRPCCameraShake() => CameraShake(true);
+
+    private void CameraShake(bool flag = false, float timer = .3f)
+    {
+        if (shakeSC == null) return;
+
+        shakeSC.m_AmplitudeGain = flag == true ? .5f : 0;
+
+        if (flag)
+        {
+            CancelInvoke("CameraShakeInvoke");
+            Invoke("CameraShakeInvoke", timer);
+        }
+    }
+
+    private void CameraShakeInvoke() => CameraShake();
 
     #endregion
 }

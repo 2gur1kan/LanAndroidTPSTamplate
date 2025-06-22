@@ -65,6 +65,10 @@ public class WeaponController : NetworkBehaviour
                 {
                     if (col.GetComponent<Player>()?.TakeDamage(Damage / 2) ?? false) CurrentPlayer.Score++;
                 }
+                else if (col.GetComponent<DynamicObject>())
+                {
+                    col.GetComponent<DynamicObject>().PushBack(transform.position, Damage);
+                }
             }
 
             Destroy(hole, 15f);
