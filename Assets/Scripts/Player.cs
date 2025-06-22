@@ -64,7 +64,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        AttachWeaponToHand(WeaponName.Pistol);
+        AttachWeaponToHand(weaponName);
 
         if (!isLocalPlayer)
         {
@@ -263,7 +263,7 @@ public class Player : NetworkBehaviour
                 break;
 
             case WeaponType.None:
-                SetTriggerPunch();
+                NoneWeaponAttack();
                 break;
         }
     }
@@ -279,6 +279,8 @@ public class Player : NetworkBehaviour
         BounceAimTarget(fireRate);
 
         if (WeaponSC != null) CmdUseWeapon(gunAim.position);
+
+        SetTriggerPunch();
     }
 
     [Command]
@@ -309,8 +311,15 @@ public class Player : NetworkBehaviour
 
     /// ///////////////// punch
 
+    private void NoneWeaponAttack()
+    {
+        SetTriggerPunch();
+    }
+
     private void SetTriggerPunch()
     {
+        if (animator == null) return;
+
         animator.SetBool("Punch", true);
 
         Invoke("ResetTriggerPunchInvoke", .1f);
@@ -354,6 +363,8 @@ public class Player : NetworkBehaviour
     {
         Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
         if (rightHand == null) return;
+
+        pac.SetAimRigWeight(gg != WeaponName.None ? 1 : 0);
 
         if (gg == WeaponName.None)
         {
